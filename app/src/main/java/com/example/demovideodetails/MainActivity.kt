@@ -5,8 +5,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -91,6 +94,7 @@ class MainActivity : AppCompatActivity() {
                     var length: Long = file.length()
                     length = length / 1024
                     Log.d("length", length.toString())
+
                 }
                 val returnCursor: Cursor? = contentResolver.query(contentURI!!, null, null, null, null)
                 Log.e("col",""+returnCursor!!.columnCount)
@@ -136,7 +140,23 @@ class MainActivity : AppCompatActivity() {
             videoView!!.start()
         }
     }
-
+    private fun getVideoMetaData(uri: Uri): String {
+        val mediaExtractor = MediaExtractor()
+        uri.path?.let { mediaExtractor.setDataSource(it) }
+        val format = mediaExtractor.getTrackFormat(0)
+        mediaExtractor.release()
+        return if(format.containsKey(MediaFormat.KEY_FRAME_RATE)){
+            val frameRate = format.getInteger(MediaFormat.KEY_FRAME_RATE)
+            val frames = frameRate * (format.getLong(MediaFormat.KEY_DURATION)/ 1000000)
+            format.getInteger(MediaFormat.KEY_WIDTH).toString();
+                format.getInteger(MediaFormat.KEY_HEIGHT).toString();
+                frames.toString();
+                frameRate.toString()
+        }else {
+            format.getInteger(MediaFormat.KEY_WIDTH).toString();
+            format.getInteger(MediaFormat.KEY_HEIGHT).toString()
+        }
+    }
     fun getPath(uri: Uri?): String? {
         val projection = arrayOf(MediaStore.Video.Media.DATA)
         val cursor = contentResolver.query(uri!!, projection, null, null, null)
