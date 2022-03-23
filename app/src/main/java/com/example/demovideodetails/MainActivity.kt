@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                     length = length / 1024
                     Log.d("length", length.toString())
 
+
                 }
                 val returnCursor: Cursor? = contentResolver.query(contentURI!!, null, null, null, null)
                 Log.e("col",""+returnCursor!!.columnCount)
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity() {
 
                 videoView!!.setVideoURI(contentURI)
                 videoView!!.requestFocus()
+                Log.d("",contentURI.host.toString())
                // videoView!!.start()
 
             }
@@ -140,23 +142,25 @@ class MainActivity : AppCompatActivity() {
             videoView!!.start()
         }
     }
-    private fun getVideoMetaData(uri: Uri): String {
+    private fun getVideoMetaData(uri: Uri) {
         val mediaExtractor = MediaExtractor()
         uri.path?.let { mediaExtractor.setDataSource(it) }
         val format = mediaExtractor.getTrackFormat(0)
         mediaExtractor.release()
-        return if(format.containsKey(MediaFormat.KEY_FRAME_RATE)){
             val frameRate = format.getInteger(MediaFormat.KEY_FRAME_RATE)
             val frames = frameRate * (format.getLong(MediaFormat.KEY_DURATION)/ 1000000)
-            format.getInteger(MediaFormat.KEY_WIDTH).toString();
-                format.getInteger(MediaFormat.KEY_HEIGHT).toString();
-                frames.toString();
-                frameRate.toString()
-        }else {
-            format.getInteger(MediaFormat.KEY_WIDTH).toString();
-            format.getInteger(MediaFormat.KEY_HEIGHT).toString()
+//            format.getInteger(MediaFormat.KEY_WIDTH).toString();
+//                format.getInteger(MediaFormat.KEY_HEIGHT).toString();
+//                frames.toString();
+//                frameRate.toString();
+            Log.d("frames",format.getInteger(MediaFormat.KEY_WIDTH).toString())
         }
-    }
+//        else {
+//            format.getInteger(MediaFormat.KEY_WIDTH).toString();
+//            format.getInteger(MediaFormat.KEY_HEIGHT).toString()
+//            Log.d("frames",frameRate.toString())
+//        }
+
     fun getPath(uri: Uri?): String? {
         val projection = arrayOf(MediaStore.Video.Media.DATA)
         val cursor = contentResolver.query(uri!!, projection, null, null, null)
@@ -167,6 +171,7 @@ class MainActivity : AppCompatActivity() {
                 .getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
             cursor!!.moveToFirst()
             Log.d("video",cursor!!.getString(column_index))
+            Log.d("video detail",cursor!!.getColumnName(column_index))
             return cursor!!.getString(column_index)
         } else
             return null
