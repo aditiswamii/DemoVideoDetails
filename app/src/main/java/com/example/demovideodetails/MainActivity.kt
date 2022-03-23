@@ -1,8 +1,10 @@
 package com.example.demovideodetails
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA)
     }
 
+    @SuppressLint("Range")
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         Log.d("result", "" + resultCode)
@@ -89,10 +92,34 @@ class MainActivity : AppCompatActivity() {
                     length = length / 1024
                     Log.d("length", length.toString())
                 }
+                val returnCursor: Cursor? = contentResolver.query(contentURI!!, null, null, null, null)
+                Log.e("col",""+returnCursor!!.columnCount)
+                returnCursor.moveToFirst()
+                for(i in 0..returnCursor!!.columnCount-1){
+                    var ind : Int = returnCursor!!.getColumnIndex(returnCursor!!.getColumnName(i))
+                    Log.e("ind",""+ind)
+                    Log.e("col",""+returnCursor!!.getColumnName(i)+" "+returnCursor.getString(ind))
+                }
+//                Log.e("col",""+returnCursor!!.getColumnName(0))
+//                Log.e("col",""+returnCursor!!.getColumnName(1))
+//                Log.e("col",""+returnCursor!!.getColumnName(2))
+//                Log.e("col",""+returnCursor!!.getColumnName(3))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+//                Log.e("col",""+returnCursor!!.getColumnName(4))
+
 
                 videoView!!.setVideoURI(contentURI)
                 videoView!!.requestFocus()
-                videoView!!.start()
+               // videoView!!.start()
 
             }
 
